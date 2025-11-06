@@ -23,7 +23,7 @@ RUN npm run build
 EXPOSE 3000
 
 # Popular banco de dados
-CMD [ "npm", "run", "seeds" ]
+CMD [ "npm", "run", "seed" ]
 
 #Inicia o servidor next.js
 CMD ["npm", "start"]
