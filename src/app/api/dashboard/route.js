@@ -27,7 +27,7 @@ export async function GET() {
     const totalAgendamentos = agendamentos.length;
 
     const faturamentoTotal = agendamentos.reduce(
-      (acc, ag) => acc + parseFloat(ag.preco || 0),
+      (acc, ag) => acc + parseFloat(ag.valor || 0),
       0
     );
     const ticketMedio =
@@ -69,7 +69,7 @@ export async function GET() {
     agendamentos.forEach((ag) => {
       const nomeBarbeiro = ag.barbeiro?.nome || "Sem barbeiro";
       if (!barbeirosMap[nomeBarbeiro]) barbeirosMap[nomeBarbeiro] = 0;
-      barbeirosMap[nomeBarbeiro] += parseFloat(ag.preco || 0);
+      barbeirosMap[nomeBarbeiro] += parseFloat(ag.valor || 0);
     });
 
     const faturamentoPorBarbeiro =

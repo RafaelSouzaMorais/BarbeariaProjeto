@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./dashboard.module.css";
 
-import { Card, Row, Col, Table, Statistic, Spin, Alert } from "antd";
+import { Card, Row, Col, Table, Statistic, Spin, Alert, Empty } from "antd";
 
 import {
   DashboardOutlined,
