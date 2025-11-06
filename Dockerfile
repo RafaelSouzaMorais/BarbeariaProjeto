@@ -22,5 +22,8 @@ RUN npm run build
 #Expor a porta 3000 para o container
 EXPOSE 3000
 
+# Popular banco de dados
+CMD [ "npm", "run", "seeds" ]
+
 #Inicia o servidor next.js
 CMD ["npm", "start"]
