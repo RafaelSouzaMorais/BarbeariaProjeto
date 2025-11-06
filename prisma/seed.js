@@ -6,18 +6,45 @@ const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
+async function verificarECriarBanco() {
+  try {
+    console.log("🔍 Verificando conexão com o banco de dados...");
+    await prisma.$connect();
+    console.log("✅ Conexão estabelecida com sucesso!");
+    return true;
+  } catch (error) {
+    console.error("❌ Erro ao conectar ao banco:", error.message);
+    console.log("\n💡 Execute os seguintes comandos para criar o banco:");
+    console.log("   1. npx prisma generate");
+    console.log("   2. npx prisma migrate dev --name init");
+    console.log("   3. npm run seed\n");
+    return false;
+  }
+}
+
 async function main() {
   console.log("🌱 Iniciando seed do banco de dados...");
 
+  // Verificar se o banco existe e está acessível
+  const bancoDisponivel = await verificarECriarBanco();
+  if (!bancoDisponivel) {
+    process.exit(1);
+  }
+
   // Limpar dados existentes (CUIDADO: remove tudo!)
   console.log("🗑️  Limpando dados existentes...");
-  await prisma.caixaLancamento.deleteMany();
-  await prisma.fechamentoCaixa.deleteMany();
-  await prisma.agendamento.deleteMany();
-  await prisma.cliente.deleteMany();
-  await prisma.servico.deleteMany();
-  await prisma.usuario.deleteMany();
-  await prisma.configuracaoSistema.deleteMany();
+  try {
+    await prisma.caixaLancamento.deleteMany();
+    await prisma.fechamentoCaixa.deleteMany();
+    await prisma.agendamento.deleteMany();
+    await prisma.cliente.deleteMany();
+    await prisma.servico.deleteMany();
+    await prisma.usuario.deleteMany();
+    await prisma.configuracaoSistema.deleteMany();
+  } catch (error) {
+    console.error("⚠️  Erro ao limpar dados:", error.message);
+    console.log("📝 Continuando mesmo assim...");
+  }
 
   // Criar usuários (barbeiros e admin)
   console.log("👤 Criando usuários...");

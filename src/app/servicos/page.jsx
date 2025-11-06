@@ -39,9 +39,10 @@ function Servicos() {
     try {
       const response = await fetch("/api/servicos");
       const data = await response.json();
-      setServicos(data);
+      setServicos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar serviços", error);
+      setServicos([]);
     } finally {
       setLoading(false);
     }
@@ -213,10 +214,12 @@ function Servicos() {
     form.submit();
   };
 
-  const servicosFiltrados = servicos.filter((s) => {
-    const pesquisa = filtroNome.toLowerCase();
-    return s.nome.toLowerCase().includes(pesquisa);
-  });
+  const servicosFiltrados = Array.isArray(servicos)
+    ? servicos.filter((s) => {
+        const pesquisa = filtroNome.toLowerCase();
+        return s.nome?.toLowerCase().includes(pesquisa);
+      })
+    : [];
 
   return (
     <div className={styles.container}>

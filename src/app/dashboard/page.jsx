@@ -240,58 +240,84 @@ function Dashboard() {
       <Row gutter={[16, 16]} className={styles.chartRow}>
         <Col xs={24} lg={12}>
           <Card title="Agendamentos por Status">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dashboardData.agendamentosPorStatus} height={300}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="status" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="total" fill="#667eea" />
-              </BarChart>
-            </ResponsiveContainer>
+            {dashboardData.agendamentosPorStatus &&
+            dashboardData.agendamentosPorStatus.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={dashboardData.agendamentosPorStatus}
+                  height={300}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="status" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="total" fill="#667eea" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ textAlign: "center", padding: "50px 0" }}>
+                <Empty description="Nenhum agendamento encontrado" />
+              </div>
+            )}
           </Card>
         </Col>
 
         <Col xs={24} lg={12}>
           <Card title="Serviços Mais Solicitados">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={dashboardData.servicosMaisSolicitados}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  dataKey="total"
-                  fill="#8884d8"
-                  label={({ servico, total }) => `${servico} : ${total}`}
-                >
-                  {dashboardData.servicosMaisSolicitados.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {dashboardData.servicosMaisSolicitados &&
+            dashboardData.servicosMaisSolicitados.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={dashboardData.servicosMaisSolicitados}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    dataKey="total"
+                    fill="#8884d8"
+                    label={({ servico, total }) => `${servico} : ${total}`}
+                  >
+                    {dashboardData.servicosMaisSolicitados.map(
+                      (entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      )
+                    )}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ textAlign: "center", padding: "50px 0" }}>
+                <Empty description="Nenhum serviço solicitado ainda" />
+              </div>
+            )}
           </Card>
         </Col>
 
         <Col xs={24} lg={24}>
           <Card title="Faturamento por Barbeiro">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={dashboardData.faturamentoPorBarbeiro}
-                height={300}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="barbeiro" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="faturamento" fill="#667eea" />
-              </BarChart>
-            </ResponsiveContainer>
+            {dashboardData.faturamentoPorBarbeiro &&
+            dashboardData.faturamentoPorBarbeiro.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={dashboardData.faturamentoPorBarbeiro}
+                  height={300}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="barbeiro" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="faturamento" fill="#667eea" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ textAlign: "center", padding: "50px 0" }}>
+                <Empty description="Nenhum faturamento registrado" />
+              </div>
+            )}
           </Card>
         </Col>
       </Row>
@@ -300,11 +326,14 @@ function Dashboard() {
         <Col xs={24} lg={8}>
           <Card title="Top 5 Clientes">
             <Table
-              dataSource={dashboardData.top5Clientes}
+              dataSource={dashboardData.top5Clientes || []}
               columns={colunasTopClientes}
               rowKey="id"
               pagination={false}
               size="small"
+              locale={{
+                emptyText: <Empty description="Nenhum cliente cadastrado" />,
+              }}
             />
           </Card>
         </Col>
@@ -312,11 +341,14 @@ function Dashboard() {
         <Col xs={24} lg={8}>
           <Card title="Últimos Clientes Cadastrados">
             <Table
-              dataSource={dashboardData.ultimos5Clientes}
+              dataSource={dashboardData.ultimos5Clientes || []}
               columns={colunasUltimosClientes}
               rowKey="id"
               pagination={false}
               size="small"
+              locale={{
+                emptyText: <Empty description="Nenhum cliente cadastrado" />,
+              }}
             />
           </Card>
         </Col>
@@ -324,59 +356,64 @@ function Dashboard() {
         <Col xs={24} lg={8}>
           <Card title="Últimos Agendamentos">
             <Table
-              dataSource={dashboardData.ultimos5Agendamentos}
+              dataSource={dashboardData.ultimos5Agendamentos || []}
               columns={colunasUltimosAgendamentos}
               rowKey="id"
               pagination={false}
               size="small"
+              locale={{
+                emptyText: <Empty description="Nenhum agendamento criado" />,
+              }}
             />
           </Card>
         </Col>
       </Row>
 
-      {dashboardData.clientesSemAgendamento.length > 0 && (
-        <Row>
-          <Col xs={24} lg={8}>
-            <Card title="Clientes sem Agendamentos">
-              <Alert
-                message="Atenção"
-                description="Existem clientes que ainda não agendaram"
-                type="warning"
-                showIcon
-              />
-              <Table
-                dataSource={dashboardData.clientesSemAgendamento}
-                columns={colunasClientesSemAgendamento}
-                rowKey="id"
-                pagination={false}
-                size="small"
-              />
-            </Card>
-          </Col>
-        </Row>
-      )}
+      {dashboardData.clientesSemAgendamento &&
+        dashboardData.clientesSemAgendamento.length > 0 && (
+          <Row>
+            <Col xs={24} lg={8}>
+              <Card title="Clientes sem Agendamentos">
+                <Alert
+                  message="Atenção"
+                  description="Existem clientes que ainda não agendaram"
+                  type="warning"
+                  showIcon
+                />
+                <Table
+                  dataSource={dashboardData.clientesSemAgendamento}
+                  columns={colunasClientesSemAgendamento}
+                  rowKey="id"
+                  pagination={false}
+                  size="small"
+                />
+              </Card>
+            </Col>
+          </Row>
+        )}
 
-      {dashboardData.servicosInativos && (
-        <Row>
-          <Col xs={24} lg={8}>
-            <Card title="Serviços Inativos">
-              <Alert
-                message="Atenção"
-                description="Existem serviços inativos no sistema"
-                type="warning"
-                showIcon
-              />
-              <Table
-                dataSource={dashboardData.servicosInativos}
-                columns={colunasServicosInativos}
-                rowKey="id"
-                pagination={false}
-                size="small"
-              />
-            </Card>
-          </Col>
-        </Row>
-      )}
+      {dashboardData.servicosInativos &&
+        dashboardData.servicosInativos.length > 0 && (
+          <Row>
+            <Col xs={24} lg={8}>
+              <Card title="Serviços Inativos">
+                <Alert
+                  message="Atenção"
+                  description="Existem serviços inativos no sistema"
+                  type="warning"
+                  showIcon
+                />
+                <Table
+                  dataSource={dashboardData.servicosInativos}
+                  columns={colunasServicosInativos}
+                  rowKey="id"
+                  pagination={false}
+                  size="small"
+                />
+              </Card>
+            </Col>
+          </Row>
+        )}
     </div>
   );
 }

@@ -54,13 +54,16 @@ export async function GET() {
       servicosMap[nomeServico]++;
     });
 
-    const servicosMaisSolicitados = Object.keys(servicosMap)
-      .map((servico) => ({
-        servico,
-        total: servicosMap[servico],
-      }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 5);
+    const servicosMaisSolicitados =
+      Object.keys(servicosMap).length > 0
+        ? Object.keys(servicosMap)
+            .map((servico) => ({
+              servico,
+              total: servicosMap[servico],
+            }))
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 5)
+        : [];
 
     const barbeirosMap = {};
     agendamentos.forEach((ag) => {
@@ -69,12 +72,13 @@ export async function GET() {
       barbeirosMap[nomeBarbeiro] += parseFloat(ag.preco || 0);
     });
 
-    const faturamentoPorBarbeiro = Object.keys(barbeirosMap).map(
-      (barbeiro) => ({
-        barbeiro,
-        faturamento: barbeirosMap[barbeiro],
-      })
-    );
+    const faturamentoPorBarbeiro =
+      Object.keys(barbeirosMap).length > 0
+        ? Object.keys(barbeirosMap).map((barbeiro) => ({
+            barbeiro,
+            faturamento: barbeirosMap[barbeiro],
+          }))
+        : [];
 
     const top5Clientes = clientes
       .map((c) => ({
@@ -121,13 +125,16 @@ export async function GET() {
       }));
 
     const servicos = await prisma.servico.findMany();
-    const servicosInativos = servicos
-      .filter((s) => !s.ativo)
-      .map((s) => ({
-        id: s.id,
-        nome: s.nome,
-        preco: "R$ " + parseFloat(s.preco).toFixed(2),
-      }));
+    const servicosInativos =
+      servicos && servicos.length > 0
+        ? servicos
+            .filter((s) => !s.ativo)
+            .map((s) => ({
+              id: s.id,
+              nome: s.nome,
+              preco: "R$ " + parseFloat(s.preco).toFixed(2),
+            }))
+        : [];
 
     return NextResponse.json({
       totalClientes,

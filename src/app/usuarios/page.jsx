@@ -41,9 +41,10 @@ function Usuarios() {
     try {
       const response = await fetch("/api/usuarios");
       const data = await response.json();
-      setUsuarios(data);
+      setUsuarios(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar usuários", error);
+      setUsuarios([]);
     } finally {
       setLoading(false);
     }
@@ -215,13 +216,15 @@ function Usuarios() {
     form.submit();
   };
 
-  const usuariosFiltrados = usuarios.filter((u) => {
-    const pesquisa = filtroNome.toLowerCase();
-    return (
-      u.nome.toLowerCase().includes(pesquisa) ||
-      u.email.toLowerCase().includes(pesquisa)
-    );
-  });
+  const usuariosFiltrados = Array.isArray(usuarios)
+    ? usuarios.filter((u) => {
+        const pesquisa = filtroNome.toLowerCase();
+        return (
+          u.nome?.toLowerCase().includes(pesquisa) ||
+          u.email?.toLowerCase().includes(pesquisa)
+        );
+      })
+    : [];
 
   return (
     <div className={styles.container}>

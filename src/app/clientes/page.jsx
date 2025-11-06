@@ -35,9 +35,10 @@ function Clientes() {
     try {
       const response = await fetch("/api/clientes");
       const data = await response.json();
-      setClientes(data);
+      setClientes(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar clientes", error);
+      setClientes([]);
     } finally {
       setLoading(false);
     }
@@ -210,14 +211,16 @@ function Clientes() {
     form.submit();
   };
 
-  const clientesFiltrados = clientes.filter((c) => {
-    const pesquisa = filtroNome.toLowerCase();
-    return (
-      c.nome.toLowerCase().includes(pesquisa) ||
-      c.telefone.includes(pesquisa) ||
-      (c.observacoes && c.observacoes.toLowerCase().includes(pesquisa))
-    );
-  });
+  const clientesFiltrados = Array.isArray(clientes)
+    ? clientes.filter((c) => {
+        const pesquisa = filtroNome.toLowerCase();
+        return (
+          c.nome?.toLowerCase().includes(pesquisa) ||
+          c.telefone?.includes(pesquisa) ||
+          (c.observacoes && c.observacoes.toLowerCase().includes(pesquisa))
+        );
+      })
+    : [];
 
   return (
     <div className={styles.container}>

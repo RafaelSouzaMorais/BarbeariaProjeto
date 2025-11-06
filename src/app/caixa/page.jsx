@@ -54,16 +54,28 @@ function Caixa() {
     try {
       const response = await fetch("/api/caixa-lancamentos");
       const data = await response.json();
-      setLancamentos(data);
-      calcularResumo(data);
+      const lancamentosArray = Array.isArray(data) ? data : [];
+      setLancamentos(lancamentosArray);
+      calcularResumo(lancamentosArray);
     } catch (error) {
       console.error("Erro ao carregar lançamentos", error);
+      setLancamentos([]);
+      calcularResumo([]);
     } finally {
       setLoading(false);
     }
   }
 
   function calcularResumo(data) {
+    if (!Array.isArray(data)) {
+      setTotalEntradas(0);
+      setTotalSaidas(0);
+      setSaldoFinal(0);
+      setQtdEntradas(0);
+      setQtdSaidas(0);
+      return;
+    }
+
     let entradas = 0;
     let saidas = 0;
     let qtdEnt = 0;

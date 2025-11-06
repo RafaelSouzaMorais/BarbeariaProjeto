@@ -59,12 +59,20 @@ function Agendamentos() {
       const dataServicos = await resServicos.json();
       const dataUsuarios = await resUsuarios.json();
 
-      setAgendamentos(dataAgendamentos);
-      setClientes(dataClientes);
-      setServicos(dataServicos.filter((s) => s.ativo)); // Apenas serviços ativos
-      setBarbeiros(dataUsuarios.filter((u) => u.ativo)); // Apenas usuários ativos
+      setAgendamentos(Array.isArray(dataAgendamentos) ? dataAgendamentos : []);
+      setClientes(Array.isArray(dataClientes) ? dataClientes : []);
+      setServicos(
+        Array.isArray(dataServicos) ? dataServicos.filter((s) => s.ativo) : []
+      ); // Apenas serviços ativos
+      setBarbeiros(
+        Array.isArray(dataUsuarios) ? dataUsuarios.filter((u) => u.ativo) : []
+      ); // Apenas usuários ativos
     } catch (error) {
       console.error("Erro ao carregar dados", error);
+      setAgendamentos([]);
+      setClientes([]);
+      setServicos([]);
+      setBarbeiros([]);
     } finally {
       setLoading(false);
     }
