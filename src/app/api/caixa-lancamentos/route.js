@@ -15,9 +15,12 @@ export async function GET(request) {
     let where = {};
     console.log("Data recebida para filtro:", data);
     if (data) {
+      // Ajusta para UTC-3 (horário de Brasília)
+      const gte = new Date(data + "T00:00:00-03:00");
+      const lte = new Date(data + "T23:59:59.999-03:00");
       where.dataHora = {
-        gte: new Date(data + "T00:00:00.000Z"),
-        lte: new Date(data + "T23:59:59.999Z"),
+        gte,
+        lte,
       };
     }
 

@@ -49,26 +49,37 @@ export default function FechamentoPage() {
     }
     setLoading(true);
     try {
-      console.log("Data do fechamento:", dataFechamento);
+      // Sempre converte para string YYYY-MM-DD
+      const dataString = dayjs(dataFechamento).format("YYYY-MM-DD");
       // Buscar lançamentos do dia diretamente pelo endpoint
       const lancamentosResp = await fetch(
-        `/api/caixa-lancamentos?data=${dataFechamento}`
+        `/api/caixa-lancamentos?data=${dataString}`
       );
       const lancamentos = await lancamentosResp.json();
       // Calcular totais
       const totalEntradas = lancamentos
         .filter((l) => l.tipo === "Entrada")
         .reduce((acc, l) => acc + parseFloat(l.valor), 0);
+
       const totalSaidas = lancamentos
         .filter((l) => l.tipo === "Saida")
         .reduce((acc, l) => acc + parseFloat(l.valor), 0);
+      const idFechamento = fechamentos.find(
+        (f) => dayjs(f.data).format("YYYY-MM-DD") === dataString
+      )?.id;
+
       const saldoFinal = totalEntradas - totalSaidas;
+      const url = idFechamento
+        ? `/api/fechamento-caixa/${idFechamento}`
+        : "/api/fechamento-caixa";
+      const method = idFechamento ? "PUT" : "POST";
+
       // Enviar para o endpoint correto
-      const response = await fetch("/api/fechamento-caixa", {
-        method: "POST",
+      const response = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: dataFechamento,
+          data: dataString,
           totalEntradas,
           totalSaidas,
           saldoFinal,
@@ -93,9 +104,7 @@ export default function FechamentoPage() {
       <div style={{ marginBottom: 24 }}>
         <DatePicker
           value={dataFechamento ? dayjs(dataFechamento) : null}
-          onChange={(date) =>
-            setDataFechamento(date ? date.format("YYYY-MM-DD") : null)
-          }
+          onChange={(date) => setDataFechamento(date ? date.toDate() : null)}
           format="DD/MM/YYYY"
           placeholder="Selecione o dia do fechamento"
         />

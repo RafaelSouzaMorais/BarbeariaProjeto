@@ -78,9 +78,11 @@ export async function POST(request) {
       );
     }
 
+    // Salva a data como meia-noite UTC-3
+    const dataSalvar = new Date(dataFechamento + "T00:00:00-03:00");
     const fechamento = await prisma.fechamentoCaixa.create({
       data: {
-        data: new Date(dataFechamento),
+        data: dataSalvar,
         totalEntradas: parseFloat(totalEntradas),
         totalSaidas: parseFloat(totalSaidas),
         saldoFinal: parseFloat(saldoFinal),
