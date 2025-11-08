@@ -9,6 +9,7 @@ import {
   DollarOutlined,
   TeamOutlined,
   DashboardOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -52,6 +53,11 @@ export default function Header() {
       key: "/dashboard",
       label: <Link href="/dashboard">Dashboard</Link>,
       icon: <DashboardOutlined />,
+    },
+    {
+      key: "/fechamento",
+      label: <Link href="/fechamento">Fechamento</Link>,
+      icon: <CheckCircleOutlined />,
     },
   ];
 

@@ -7,9 +7,22 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // GET ALL -> Pegar todos os lançamentos de caixa
-export async function GET() {
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const data = searchParams.get("data");
+
+    let where = {};
+    console.log("Data recebida para filtro:", data);
+    if (data) {
+      where.dataHora = {
+        gte: new Date(data + "T00:00:00.000Z"),
+        lte: new Date(data + "T23:59:59.999Z"),
+      };
+    }
+
     const lancamentos = await prisma.caixaLancamento.findMany({
+      where,
       include: {
         agendamento: {
           select: {
